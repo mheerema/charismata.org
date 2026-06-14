@@ -6,11 +6,11 @@ import { useParams } from "next/navigation";
 const QUESTIONS_PER_PAGE = 12;
 
 const SCALE_OPTIONS = [
-  { value: 1, label: "Strongly Disagree", short: "SD" },
-  { value: 2, label: "Disagree", short: "D" },
-  { value: 3, label: "Neutral", short: "N" },
-  { value: 4, label: "Agree", short: "A" },
-  { value: 5, label: "Strongly Agree", short: "SA" },
+  { value: 1, label: "Strongly Disagree", short: "-2" },
+  { value: 2, label: "Disagree", short: "-1" },
+  { value: 3, label: "Neutral", short: "0" },
+  { value: 4, label: "Agree", short: "+1" },
+  { value: 5, label: "Strongly Agree", short: "+2" },
 ];
 
 interface SessionQuestion {
@@ -40,6 +40,8 @@ export default function AssessmentPage() {
   const [status, setStatus] = useState<"started" | "submitted">("started");
   const [scores, setScores] = useState<ScoreWithCategory[]>([]);
   const [participantName, setParticipantName] = useState("");
+  const [churchName, setChurchName] = useState("");
+  const [groupName, setGroupName] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,6 +70,8 @@ export default function AssessmentPage() {
         setCurrentPage(data.session?.current_page || 0);
         setScores(data.scores || []);
         setParticipantName(data.session?.participant_name || "");
+        setChurchName(data.session?.church_name || "");
+        setGroupName(data.session?.group_name || "");
       })
       .catch(() => setError("Failed to load assessment"))
       .finally(() => setLoading(false));
@@ -195,7 +199,6 @@ export default function AssessmentPage() {
                     <span className={`text-sm font-medium ${isTop2 ? "text-stone-900" : "text-stone-500"}`}>
                       {score.public_name}
                     </span>
-                    <span className="text-xs text-stone-400">{score.average_score} avg</span>
                   </div>
                   <div className="w-full h-6 bg-stone-100 rounded-full overflow-hidden">
                     <div
@@ -268,6 +271,49 @@ export default function AssessmentPage() {
             with your pastor, small group leader, or mentor and discuss how your gifts can be
             put to use in the life of the church.
           </p>
+        </div>
+
+        {/* Share & Invite */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={async () => {
+              const top2 = scores.slice(0, 2).map((s) => s.public_name).join(" and ");
+              const url = window.location.href;
+              const text = `I just took the Charismata spiritual gifts assessment! My top gifts are ${top2}. See my full results:`;
+              if (navigator.share) {
+                try {
+                  await navigator.share({ text, url });
+                } catch { /* cancelled */ }
+              } else {
+                await navigator.clipboard.writeText(`${text}\n${url}`);
+                alert("Link copied to clipboard!");
+              }
+            }}
+            className="py-3 bg-stone-900 text-white rounded-xl text-sm font-semibold hover:bg-stone-800 transition-colors"
+          >
+            Share Your Results
+          </button>
+          <button
+            onClick={async () => {
+              const params = new URLSearchParams();
+              if (churchName) params.set("church", churchName);
+              if (groupName) params.set("group", groupName);
+              const qs = params.toString();
+              const inviteUrl = `${window.location.origin}/${qs ? `?${qs}` : ""}`;
+              const text = "Take the Charismata spiritual gifts assessment and discover how God has equipped you for service!";
+              if (navigator.share) {
+                try {
+                  await navigator.share({ text, url: inviteUrl });
+                } catch { /* cancelled */ }
+              } else {
+                await navigator.clipboard.writeText(`${text}\n${inviteUrl}`);
+                alert("Invite link copied to clipboard!");
+              }
+            }}
+            className="py-3 bg-white text-stone-700 border border-stone-300 rounded-xl text-sm font-semibold hover:bg-stone-50 transition-colors"
+          >
+            Invite Someone
+          </button>
         </div>
 
         <div className="text-center">
@@ -436,12 +482,7 @@ function GiftCard({
         onClick={() => setExpanded(!expanded)}
         className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-stone-50 transition-colors"
       >
-        <div>
-          <h3 className="text-base font-semibold text-stone-900">{score.public_name}</h3>
-          <p className="text-xs text-stone-400 mt-0.5">
-            Score: {score.raw_score}/60 ({score.average_score} avg)
-          </p>
-        </div>
+        <h3 className="text-base font-semibold text-stone-900">{score.public_name}</h3>
         <svg
           className={`w-5 h-5 text-stone-400 transition-transform ${expanded ? "rotate-180" : ""}`}
           fill="none"

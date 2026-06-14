@@ -1,16 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Home() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [church, setChurch] = useState("");
   const [group, setGroup] = useState("");
   const [starting, setStarting] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+
+  useEffect(() => {
+    const c = searchParams.get("church");
+    const g = searchParams.get("group");
+    if (c) setChurch(c);
+    if (g) setGroup(g);
+    if (c || g) setShowInfo(true);
+  }, [searchParams]);
 
   const handleStart = async () => {
     setStarting(true);
