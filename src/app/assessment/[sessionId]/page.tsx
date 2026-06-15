@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
+import { GIFT_NEXT_STEPS, RESULTS_CALLOUT } from "@/lib/gift-content";
 
 const QUESTIONS_PER_PAGE = 12;
 
@@ -184,6 +185,23 @@ export default function AssessmentPage() {
           {participantName && <p className="text-stone-500 mt-1">{participantName}</p>}
         </div>
 
+        {/* Results-interpretation callout */}
+        <div className="bg-stone-100/60 rounded-2xl border border-stone-200 p-6">
+          <h2 className="text-sm font-semibold text-stone-700 mb-2">
+            {RESULTS_CALLOUT.heading}
+          </h2>
+          <p className="text-sm text-stone-600 leading-relaxed">
+            {RESULTS_CALLOUT.segments.map((seg, i) => (
+              <span key={i}>
+                {seg.bold && (
+                  <strong className="font-semibold text-stone-800">{seg.bold}</strong>
+                )}
+                {seg.text}
+              </span>
+            ))}
+          </p>
+        </div>
+
         {/* Bar chart */}
         <div className="bg-white rounded-2xl border border-stone-200 p-6">
           <div className="space-y-3">
@@ -221,7 +239,7 @@ export default function AssessmentPage() {
           </h2>
           <div className="grid gap-4">
             {scores.slice(0, 2).map((score) => (
-              <GiftCard key={score.category_id} score={score} />
+              <GiftCard key={score.category_id} score={score} showNextStep />
             ))}
           </div>
         </div>
@@ -233,7 +251,7 @@ export default function AssessmentPage() {
           </h2>
           <div className="grid gap-4">
             {scores.slice(2, 5).map((score) => (
-              <GiftCard key={score.category_id} score={score} />
+              <GiftCard key={score.category_id} score={score} showNextStep />
             ))}
           </div>
         </div>
@@ -272,6 +290,14 @@ export default function AssessmentPage() {
             put to use in the life of the church.
           </p>
         </div>
+
+        {/* Confirm in community CTA */}
+        <a
+          href="/confirm"
+          className="block w-full py-3 bg-stone-900 text-white rounded-xl text-sm font-semibold text-center hover:bg-stone-800 transition-colors"
+        >
+          Next: confirm your gifts in community →
+        </a>
 
         {/* Share & Invite */}
         <div className="grid grid-cols-2 gap-3">
@@ -470,11 +496,14 @@ export default function AssessmentPage() {
 function GiftCard({
   score,
   startCollapsed = false,
+  showNextStep = false,
 }: {
   score: ScoreWithCategory;
   startCollapsed?: boolean;
+  showNextStep?: boolean;
 }) {
   const [expanded, setExpanded] = useState(!startCollapsed);
+  const nextStep = showNextStep ? GIFT_NEXT_STEPS[score.public_name] : undefined;
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
@@ -524,6 +553,45 @@ function GiftCard({
                 Possible Ministry Fit
               </h4>
               <p className="text-sm text-stone-600 leading-relaxed">{score.ministry_fit}</p>
+            </div>
+          )}
+
+          {nextStep && (
+            <div className="mt-2 rounded-xl bg-stone-50 border border-stone-100 p-4 space-y-3">
+              <div>
+                <h5 className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
+                  Reflect
+                </h5>
+                <ul className="space-y-1">
+                  {nextStep.reflect.map((item, i) => (
+                    <li key={i} className="text-xs text-stone-500 leading-relaxed">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h5 className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
+                  This week
+                </h5>
+                <ul className="space-y-1">
+                  {nextStep.steps.map((item, i) => (
+                    <li key={i} className="text-xs text-stone-500 leading-relaxed">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h5 className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
+                  Sit with
+                </h5>
+                <p className="text-xs text-stone-500 leading-relaxed">
+                  {nextStep.scripture}
+                </p>
+              </div>
             </div>
           )}
         </div>
