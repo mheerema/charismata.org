@@ -10,6 +10,7 @@ interface SessionRow {
 
 interface ScoreRow {
   category_id: string;
+  internal_name: string;
   public_name: string;
   description: string | null;
   strengths: string | null;
@@ -55,7 +56,7 @@ export async function GET(
 
     // Fetch scores with full category details
     const scoresResult = await query<ScoreRow>(
-      `SELECT s.category_id, c.public_name, c.description,
+      `SELECT s.category_id, c.internal_name, c.public_name, c.description,
               c.strengths, c.cautions, c.ministry_fit,
               s.raw_score, s.average_score, s.rank
        FROM sg_scores s
@@ -73,6 +74,7 @@ export async function GET(
       },
       scores: scoresResult.rows.map((s) => ({
         category_id: s.category_id,
+        internal_name: s.internal_name,
         public_name: s.public_name,
         description: s.description,
         strengths: s.strengths,

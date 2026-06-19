@@ -1,7 +1,9 @@
 // Authored content for the three post-results surfaces (Confirm page, results
 // callout, per-gift Next Step). Copy is final and verbatim — do not paraphrase.
-// Keys in GIFT_NEXT_STEPS must match each category's public_name exactly, or the
-// results-screen lookup silently returns nothing.
+// Keys in GIFT_NEXT_STEPS are each category's stable internal_name (never the
+// editable public_name). public_name can be renamed in the admin UI; keying on
+// it meant a renamed/retired category silently resolved nothing. internal_name
+// is the durable identity, so the lookup stays correct across renames.
 
 export interface GiftNextStep {
   reflect: string[];
@@ -9,10 +11,13 @@ export interface GiftNextStep {
   scripture: string;
 }
 
-// ─── Surface 3: per-gift "Next Step" content (all 11 categories) ───────────
+// ─── Surface 3: per-gift "Next Step" content (all 11 active categories) ─────
+// Keyed by sg_categories.internal_name. The retired "service_administration"
+// category (is_active = FALSE) intentionally has no entry — historical sessions
+// scoring it degrade to an empty Next Step rather than crash or mislead.
 
 export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
-  "Word & Wisdom": {
+  word_wisdom: {
     reflect: [
       "When you grasp something true about God, do you feel the pull to explain it to someone, or is understanding enough on its own?",
       "Whose understanding has actually grown because of how you opened the text to them, and how do you know?",
@@ -24,7 +29,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "Second Timothy 2:2 — entrusting what you've learned to faithful people who can teach others.",
   },
-  "Shepherding & Care": {
+  shepherding_care: {
     reflect: [
       "Is there someone whose spiritual life you have quietly carried for more than a year, beyond a single event or season?",
       "Where does your care for people end: at the comfortable conversation, or does it follow them into the hard, slow, unglamorous middle?",
@@ -36,7 +41,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "First Peter 5:2 — shepherding the flock willingly, not under compulsion, and not for what you get from it.",
   },
-  "Service & Helps": {
+  service_helps: {
     reflect: [
       "When you serve, are you serving from joy or from a sense of obligation you can't quite put down?",
       "Which practical needs do you notice that almost everyone else walks past?",
@@ -48,7 +53,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "Mark 10:45 — the Son of Man came not to be served but to serve.",
   },
-  Leadership: {
+  leadership: {
     reflect: [
       "Where do you already see a way forward that the people around you haven't named yet, and what is keeping you from going first?",
       "When you've taken initiative before, did people end up better off, or did you mostly end up out front?",
@@ -60,7 +65,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "Hebrews 13:7 — leaders whose way of life, not whose title, is worth imitating.",
   },
-  Administration: {
+  administration: {
     reflect: [
       "What is currently running on willpower and last-minute scrambling that a good system could carry instead?",
       "Do people rely on you to keep track of who is doing what, and have you mistaken your love of order for a calling to serve a mission?",
@@ -72,7 +77,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "First Corinthians 14:40 — let all things be done decently and in order, for the body's sake.",
   },
-  "Evangelistic & Missional": {
+  evangelistic_missional: {
     reflect: [
       "Whose face comes to mind when you think of someone far from God, and what would it actually cost you to speak to them?",
       "When you have shared the gospel before, did clarity and boldness come more easily to you than to most?",
@@ -84,7 +89,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "Acts 8:35 — Philip beginning from the Scripture and telling the good news of Jesus.",
   },
-  "Prophetic & Discernment": {
+  prophetic_discernment: {
     reflect: [
       "When a teaching or decision sits wrong with you, can you trace the unease back to Scripture, or does it stay at the level of a hunch?",
       "Are you willing to name a hard truth out loud when staying quiet would keep things smoother?",
@@ -96,7 +101,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "Acts 17:11 — the Bereans examining the Scriptures daily to see whether these things were so.",
   },
-  "Faith & Intercession": {
+  faith_intercession: {
     reflect: [
       "Where are you trusting God for something the people around you have already written off as impossible?",
       "When you hear of a need, does prayer come first, or does it come after you've exhausted what you can fix yourself?",
@@ -108,7 +113,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "Hebrews 11:27 — enduring as seeing Him who is invisible.",
   },
-  "Stewardship & Generosity": {
+  stewardship_generosity: {
     reflect: [
       "Do you hold your money as something owned, or as something entrusted to deploy?",
       "Where could a gift of yours quietly meet a real need that no one is asking you to meet?",
@@ -120,7 +125,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "Second Corinthians 9:7 — God loves a cheerful giver, one who has decided in his heart, not under compulsion.",
   },
-  "Creative & Communication": {
+  creative_communication: {
     reflect: [
       "When you make something, whether words, images, music, or design, does it draw people toward truth, or only toward the work itself?",
       "Where has your care for how something is said or made actually helped someone receive what was being said?",
@@ -132,7 +137,7 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
     scripture:
       "Exodus 35:31–35 — Bezalel filled with the Spirit of God for skilled craftsmanship, and given the ability to teach others.",
   },
-  "Exhortation & Encouragement": {
+  exhortation_encouragement: {
     reflect: [
       "Do people leave conversations with you more able to take their next step, or only more comforted?",
       "Can you tell the difference between someone who needs a gentle push and someone who needs a soft place to land?",
@@ -145,6 +150,23 @@ export const GIFT_NEXT_STEPS: Record<string, GiftNextStep> = {
       "Hebrews 3:13 — exhort one another daily, that none be hardened.",
   },
 };
+
+// The internal_name set for the 11 currently-active categories, in display
+// order. Mirrors the active rows in seed-data.ts / migrate-categories.ts. The
+// unit test asserts every entry here resolves a non-empty Next Step.
+export const ACTIVE_CATEGORY_INTERNAL_NAMES = [
+  "word_wisdom",
+  "shepherding_care",
+  "service_helps",
+  "leadership",
+  "administration",
+  "evangelistic_missional",
+  "prophetic_discernment",
+  "faith_intercession",
+  "stewardship_generosity",
+  "creative_communication",
+  "exhortation_encouragement",
+] as const;
 
 // ─── Surface 2: results-interpretation callout ─────────────────────────────
 // The body has four bold lead-ins. Each segment carries an optional `bold`

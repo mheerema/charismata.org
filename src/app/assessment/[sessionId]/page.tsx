@@ -23,6 +23,7 @@ interface SessionQuestion {
 
 interface ScoreWithCategory {
   category_id: string;
+  internal_name: string;
   public_name: string;
   description: string | null;
   strengths: string | null;
@@ -543,7 +544,11 @@ function GiftCard({
   showNextStep?: boolean;
 }) {
   const [expanded, setExpanded] = useState(!startCollapsed);
-  const nextStep = showNextStep ? GIFT_NEXT_STEPS[score.public_name] : undefined;
+  // Key by the stable internal_name. An inactive/renamed category that has no
+  // entry resolves to undefined and the Next Step block simply does not render.
+  const nextStep = showNextStep
+    ? GIFT_NEXT_STEPS[score.internal_name]
+    : undefined;
 
   return (
     <div className="bg-surface rounded-card border border-border shadow-card overflow-hidden">

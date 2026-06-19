@@ -29,9 +29,27 @@ interface ResponseRow {
 
 interface ScoreRow {
   category_id: string;
-  category_name: string;
+  internal_name: string;
+  public_name: string;
+  description: string | null;
+  strengths: string | null;
+  cautions: string | null;
+  ministry_fit: string | null;
   raw_score: number;
   average_score: string;
+  rank: number;
+}
+
+interface ScoreOut {
+  category_id: string;
+  internal_name: string;
+  public_name: string;
+  description: string | null;
+  strengths: string | null;
+  cautions: string | null;
+  ministry_fit: string | null;
+  raw_score: number;
+  average_score: number;
   rank: number;
 }
 
@@ -87,10 +105,11 @@ export async function GET(
     }
 
     // Fetch scores if submitted
-    let scores: ScoreRow[] = [];
+    let scores: ScoreOut[] = [];
     if (session.status === "submitted") {
       const scoresResult = await query<ScoreRow>(
-        `SELECT s.category_id, c.public_name AS category_name,
+        `SELECT s.category_id, c.internal_name, c.public_name,
+                c.description, c.strengths, c.cautions, c.ministry_fit,
                 s.raw_score, s.average_score, s.rank
          FROM sg_scores s
          JOIN sg_categories c ON c.id = s.category_id
@@ -98,7 +117,18 @@ export async function GET(
          ORDER BY s.rank`,
         [sessionId]
       );
-      scores = scoresResult.rows;
+      scores = scoresResult.rows.map((s) => ({
+        category_id: s.category_id,
+        internal_name: s.internal_name,
+        public_name: s.public_name,
+        description: s.description,
+        strengths: s.strengths,
+        cautions: s.cautions,
+        ministry_fit: s.ministry_fit,
+        raw_score: s.raw_score,
+        average_score: parseFloat(s.average_score),
+        rank: s.rank,
+      }));
     }
 
     return NextResponse.json({
