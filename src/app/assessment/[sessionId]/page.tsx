@@ -170,8 +170,8 @@ export default function AssessmentPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin w-8 h-8 border-4 border-stone-200 border-t-stone-600 rounded-full" />
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="animate-spin w-8 h-8 border-4 border-border border-t-accent rounded-full" />
       </div>
     );
   }
@@ -179,22 +179,25 @@ export default function AssessmentPage() {
   // ─── Results ─────────────────────────────────────
   if (status === "submitted" && scores.length > 0) {
     return (
-      <main className="max-w-2xl mx-auto px-4 py-12 space-y-8">
+      <main className="max-w-2xl mx-auto px-4 py-12 sm:py-16 space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-stone-900">Your Results</h1>
-          {participantName && <p className="text-stone-500 mt-1">{participantName}</p>}
+          <p className="type-eyebrow text-accent mb-3">Charismata</p>
+          <h1 className="type-h1 text-foreground">Your Results</h1>
+          {participantName && (
+            <p className="type-small text-muted-foreground mt-2">{participantName}</p>
+          )}
         </div>
 
         {/* Results-interpretation callout */}
-        <div className="bg-stone-100/60 rounded-2xl border border-stone-200 p-6">
-          <h2 className="text-sm font-semibold text-stone-700 mb-2">
+        <div className="bg-accent-subtle rounded-card p-6">
+          <h2 className="type-h3 text-accent-strong mb-2">
             {RESULTS_CALLOUT.heading}
           </h2>
-          <p className="text-sm text-stone-600 leading-relaxed">
+          <p className="type-small text-muted-foreground">
             {RESULTS_CALLOUT.segments.map((seg, i) => (
               <span key={i}>
                 {seg.bold && (
-                  <strong className="font-semibold text-stone-800">{seg.bold}</strong>
+                  <strong className="font-semibold text-foreground">{seg.bold}</strong>
                 )}
                 {seg.text}
               </span>
@@ -203,26 +206,39 @@ export default function AssessmentPage() {
         </div>
 
         {/* Bar chart */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-6">
-          <div className="space-y-3">
+        <div className="bg-surface rounded-card border border-border shadow-card p-6">
+          <div className="space-y-3.5">
             {scores.map((score) => {
               const maxScore = 50;
               const widthPct = Math.round((score.raw_score / maxScore) * 100);
+              const isTop1 = score.rank === 1;
               const isTop2 = score.rank <= 2;
               const isBottom2 = score.rank >= scores.length - 1;
 
+              // Top-2 gifts in teal accent; the rest in a graduated neutral.
+              const barColor = isTop1
+                ? "bg-accent-strong"
+                : isTop2
+                ? "bg-accent"
+                : isBottom2
+                ? "bg-border-strong"
+                : "bg-stone-400";
+
               return (
                 <div key={score.category_id}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className={`text-sm font-medium ${isTop2 ? "text-stone-900" : "text-stone-500"}`}>
+                  <span className="sr-only">{score.public_name}: {widthPct}%</span>
+                  <div className="flex items-center justify-between mb-1.5" aria-hidden="true">
+                    <span
+                      className={`type-small font-medium ${
+                        isTop2 ? "text-foreground" : "text-muted-foreground"
+                      }`}
+                    >
                       {score.public_name}
                     </span>
                   </div>
-                  <div className="w-full h-6 bg-stone-100 rounded-full overflow-hidden">
+                  <div className="w-full h-6 bg-surface-subtle rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all duration-700 ${
-                        isTop2 ? "bg-stone-800" : isBottom2 ? "bg-stone-300" : "bg-stone-500"
-                      }`}
+                      className={`h-full rounded-full transition-all duration-700 ${barColor}`}
                       style={{ width: `${widthPct}%` }}
                     />
                   </div>
@@ -234,7 +250,7 @@ export default function AssessmentPage() {
 
         {/* Primary */}
         <div>
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">
+          <h2 className="type-eyebrow text-accent mb-3">
             Primary Strengths
           </h2>
           <div className="grid gap-4">
@@ -246,7 +262,7 @@ export default function AssessmentPage() {
 
         {/* Secondary */}
         <div>
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">
+          <h2 className="type-eyebrow text-muted-foreground mb-3">
             Secondary Strengths
           </h2>
           <div className="grid gap-4">
@@ -258,7 +274,7 @@ export default function AssessmentPage() {
 
         {/* Middle */}
         <div>
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">
+          <h2 className="type-eyebrow text-faint-foreground mb-3">
             Middle Range
           </h2>
           <div className="grid gap-4">
@@ -270,7 +286,7 @@ export default function AssessmentPage() {
 
         {/* Lower */}
         <div>
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">
+          <h2 className="type-eyebrow text-faint-foreground mb-3">
             Lower-Energy Areas
           </h2>
           <div className="grid gap-4">
@@ -281,9 +297,9 @@ export default function AssessmentPage() {
         </div>
 
         {/* What next */}
-        <div className="bg-stone-100/60 rounded-2xl border border-stone-200 p-6">
-          <h3 className="text-sm font-semibold text-stone-700 mb-2">What Next?</h3>
-          <p className="text-sm text-stone-500 leading-relaxed">
+        <div className="bg-surface-subtle rounded-card border border-border p-6">
+          <h3 className="type-h3 text-foreground mb-2">What Next?</h3>
+          <p className="type-small text-muted-foreground">
             This assessment is descriptive, not definitive. Spiritual maturity, character, and
             local church affirmation matter more than self-perception alone. Share these results
             with your pastor, small group leader, or mentor and discuss how your gifts can be
@@ -294,7 +310,7 @@ export default function AssessmentPage() {
         {/* Confirm in community CTA */}
         <a
           href="/confirm"
-          className="block w-full py-3 bg-stone-900 text-white rounded-xl text-sm font-semibold text-center hover:bg-stone-800 transition-colors"
+          className="block w-full py-3.5 bg-accent text-accent-foreground rounded-card text-base font-semibold text-center shadow-card hover:bg-accent-hover transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Next: confirm your gifts in community →
         </a>
@@ -315,7 +331,7 @@ export default function AssessmentPage() {
                 alert("Link copied to clipboard!");
               }
             }}
-            className="py-3 bg-stone-900 text-white rounded-xl text-sm font-semibold hover:bg-stone-800 transition-colors"
+            className="py-3 bg-foreground text-background rounded-md text-sm font-semibold hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Share Your Results
           </button>
@@ -336,14 +352,14 @@ export default function AssessmentPage() {
                 alert("Invite link copied to clipboard!");
               }
             }}
-            className="py-3 bg-white text-stone-700 border border-stone-300 rounded-xl text-sm font-semibold hover:bg-stone-50 transition-colors"
+            className="py-3 bg-surface text-foreground border border-border-strong rounded-md text-sm font-semibold hover:bg-surface-subtle transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Invite Someone
           </button>
         </div>
 
         <div className="text-center">
-          <a href="/resources" className="text-sm text-stone-500 hover:text-stone-700 transition-colors">
+          <a href="/resources" className="type-small text-accent hover:text-accent-hover font-medium transition-colors">
             Explore the glossary and theological framework →
           </a>
         </div>
@@ -351,7 +367,7 @@ export default function AssessmentPage() {
         <div className="text-center">
           <a
             href="/"
-            className="text-sm text-stone-500 hover:text-stone-700 transition-colors"
+            className="type-small text-muted-foreground hover:text-foreground transition-colors"
           >
             Take another assessment
           </a>
@@ -369,17 +385,24 @@ export default function AssessmentPage() {
   return (
     <main className="max-w-2xl mx-auto px-4 py-4">
       {/* Progress */}
-      <div className="sticky top-0 bg-[#fafaf9]/95 backdrop-blur-sm z-10 pb-4 pt-2">
+      <div className="sticky top-0 bg-background/95 backdrop-blur-sm z-10 pb-4 pt-2">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-stone-500">
+          <span className="type-small text-muted-foreground">
             {currentPage * QUESTIONS_PER_PAGE + 1}–
             {Math.min((currentPage + 1) * QUESTIONS_PER_PAGE, totalCount)} of {totalCount}
           </span>
-          <span className="text-sm font-medium text-stone-700">{progressPct}%</span>
+          <span className="type-small font-medium text-foreground">{progressPct}%</span>
         </div>
-        <div className="w-full h-1.5 bg-stone-200 rounded-full overflow-hidden">
+        <div
+          role="progressbar"
+          aria-valuenow={progressPct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Assessment progress"
+          className="w-full h-1.5 bg-surface-subtle rounded-full overflow-hidden"
+        >
           <div
-            className="h-full bg-stone-700 rounded-full transition-all duration-300"
+            className="h-full bg-accent rounded-full transition-all duration-300"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -394,14 +417,20 @@ export default function AssessmentPage() {
               <button
                 key={i}
                 onClick={() => handlePageChange(i)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  i === currentPage
-                    ? "bg-stone-800 scale-150"
-                    : allDone
-                    ? "bg-stone-500"
-                    : "bg-stone-300"
-                }`}
-              />
+                aria-label={`Go to page ${i + 1}${allDone ? ", complete" : ", incomplete"}${i === currentPage ? ", current" : ""}`}
+                aria-current={i === currentPage ? "step" : undefined}
+                className="min-w-[24px] min-h-[24px] inline-flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <span
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    i === currentPage
+                      ? "bg-accent-strong scale-150"
+                      : allDone
+                      ? "bg-accent"
+                      : "bg-faint-foreground"
+                  }`}
+                />
+              </button>
             );
           })}
         </div>
@@ -416,24 +445,32 @@ export default function AssessmentPage() {
           return (
             <div
               key={q.question_id}
-              className={`bg-white rounded-xl border-2 p-5 transition-colors ${
-                selectedValue !== undefined ? "border-stone-200" : "border-stone-300"
+              className={`bg-surface rounded-card p-5 shadow-card transition-shadow ${
+                selectedValue !== undefined
+                  ? "border border-border"
+                  : "border border-border-strong"
               }`}
             >
-              <p className="text-sm text-stone-800 mb-4 leading-relaxed">
-                <span className="text-stone-400 font-medium mr-2">{globalIdx}.</span>
+              <p id={`q-${q.question_id}`} className="type-body text-foreground mb-4">
+                <span className="text-faint-foreground font-medium mr-2">{globalIdx}.</span>
                 {q.question_text}
               </p>
 
-              <div className="flex items-center justify-between gap-1">
+              <div
+                role="group"
+                aria-labelledby={`q-${q.question_id}`}
+                className="flex items-center justify-between gap-1.5"
+              >
                 {SCALE_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
                     onClick={() => handleResponse(q.question_id, opt.value)}
-                    className={`flex-1 py-2.5 rounded-lg text-xs font-medium transition-all ${
+                    aria-pressed={selectedValue === opt.value}
+                    aria-label={opt.label}
+                    className={`flex-1 min-h-[40px] py-2.5 rounded-md text-xs sm:text-[13px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
                       selectedValue === opt.value
-                        ? "bg-stone-800 text-white shadow-sm"
-                        : "bg-stone-50 text-stone-500 hover:bg-stone-100"
+                        ? "bg-accent text-accent-foreground shadow-xs"
+                        : "bg-surface-subtle text-muted-foreground border border-border hover:bg-accent-subtle hover:text-accent-strong hover:border-accent-subtle"
                     }`}
                   >
                     <span className="hidden sm:inline">{opt.label}</span>
@@ -447,7 +484,10 @@ export default function AssessmentPage() {
       </div>
 
       {error && (
-        <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+        <div
+          role="alert"
+          className="mt-4 bg-red-50 border border-red-200 rounded-md p-3 type-small text-red-700"
+        >
           {error}
         </div>
       )}
@@ -457,7 +497,7 @@ export default function AssessmentPage() {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 0}
-          className="px-4 py-2.5 text-sm font-medium text-stone-600 bg-white border border-stone-300 rounded-xl hover:bg-stone-50 disabled:opacity-30"
+          className="px-4 py-2.5 text-sm font-medium text-foreground bg-surface border border-border-strong rounded-md hover:bg-surface-subtle disabled:opacity-30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Previous
         </button>
@@ -466,7 +506,7 @@ export default function AssessmentPage() {
           <button
             onClick={handleSubmit}
             disabled={!allAnswered || submitting}
-            className="px-6 py-2.5 text-sm font-semibold text-white bg-stone-900 rounded-xl hover:bg-stone-800 disabled:opacity-50 transition-colors"
+            className="px-6 py-2.5 text-sm font-semibold text-accent-foreground bg-accent rounded-md shadow-card hover:bg-accent-hover disabled:opacity-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             {submitting
               ? "Submitting..."
@@ -477,10 +517,10 @@ export default function AssessmentPage() {
         ) : (
           <button
             onClick={() => handlePageChange(currentPage + 1)}
-            className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-colors ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               pageComplete
-                ? "bg-stone-900 text-white hover:bg-stone-800"
-                : "bg-white text-stone-600 border border-stone-300 hover:bg-stone-50"
+                ? "bg-accent text-accent-foreground shadow-card hover:bg-accent-hover"
+                : "bg-surface text-foreground border border-border-strong hover:bg-surface-subtle"
             }`}
           >
             Next
@@ -506,14 +546,14 @@ function GiftCard({
   const nextStep = showNextStep ? GIFT_NEXT_STEPS[score.public_name] : undefined;
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+    <div className="bg-surface rounded-card border border-border shadow-card overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-stone-50 transition-colors"
+        className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-surface-subtle transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
       >
-        <h3 className="text-base font-semibold text-stone-900">{score.public_name}</h3>
+        <h3 className="type-h3 text-foreground">{score.public_name}</h3>
         <svg
-          className={`w-5 h-5 text-stone-400 transition-transform ${expanded ? "rotate-180" : ""}`}
+          className={`w-5 h-5 text-accent shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={2}
@@ -524,47 +564,47 @@ function GiftCard({
       </button>
 
       {expanded && (
-        <div className="px-5 pb-5 space-y-4 border-t border-stone-100 pt-4">
+        <div className="px-5 pb-5 space-y-4 border-t border-border pt-4">
           {score.description && (
-            <p className="text-sm text-stone-600 leading-relaxed">{score.description}</p>
+            <p className="type-small text-muted-foreground">{score.description}</p>
           )}
 
           {score.strengths && (
             <div>
-              <h4 className="text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1">
+              <h4 className="type-eyebrow text-accent mb-1">
                 Strengths & Contributions
               </h4>
-              <p className="text-sm text-stone-600 leading-relaxed">{score.strengths}</p>
+              <p className="type-small text-muted-foreground">{score.strengths}</p>
             </div>
           )}
 
           {score.cautions && (
             <div>
-              <h4 className="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-1">
+              <h4 className="type-eyebrow text-amber-700 mb-1">
                 Watch-Outs
               </h4>
-              <p className="text-sm text-stone-600 leading-relaxed">{score.cautions}</p>
+              <p className="type-small text-muted-foreground">{score.cautions}</p>
             </div>
           )}
 
           {score.ministry_fit && (
             <div>
-              <h4 className="text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1">
+              <h4 className="type-eyebrow text-muted-foreground mb-1">
                 Possible Ministry Fit
               </h4>
-              <p className="text-sm text-stone-600 leading-relaxed">{score.ministry_fit}</p>
+              <p className="type-small text-muted-foreground">{score.ministry_fit}</p>
             </div>
           )}
 
           {nextStep && (
-            <div className="mt-2 rounded-xl bg-stone-50 border border-stone-100 p-4 space-y-3">
+            <div className="mt-2 rounded-lg bg-accent-subtle p-4 space-y-3">
               <div>
-                <h5 className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
+                <h5 className="type-eyebrow text-accent-strong mb-1">
                   Reflect
                 </h5>
                 <ul className="space-y-1">
                   {nextStep.reflect.map((item, i) => (
-                    <li key={i} className="text-xs text-stone-500 leading-relaxed">
+                    <li key={i} className="type-caption text-muted-foreground">
                       {item}
                     </li>
                   ))}
@@ -572,12 +612,12 @@ function GiftCard({
               </div>
 
               <div>
-                <h5 className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
+                <h5 className="type-eyebrow text-accent-strong mb-1">
                   This week
                 </h5>
                 <ul className="space-y-1">
                   {nextStep.steps.map((item, i) => (
-                    <li key={i} className="text-xs text-stone-500 leading-relaxed">
+                    <li key={i} className="type-caption text-muted-foreground">
                       {item}
                     </li>
                   ))}
@@ -585,10 +625,10 @@ function GiftCard({
               </div>
 
               <div>
-                <h5 className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">
+                <h5 className="type-eyebrow text-accent-strong mb-1">
                   Sit with
                 </h5>
-                <p className="text-xs text-stone-500 leading-relaxed">
+                <p className="type-caption text-muted-foreground italic">
                   {nextStep.scripture}
                 </p>
               </div>

@@ -503,23 +503,24 @@ export default function ResourcesPage() {
     const isExpanded = expandedTerms.has(key);
 
     return (
-      <div key={key} className="border-b border-stone-100 last:border-b-0">
+      <div key={key} className="border-b border-border last:border-b-0">
         <button
           onClick={() => toggleTerm(key)}
-          className="w-full py-4 flex items-start justify-between text-left group"
+          aria-expanded={isExpanded}
+          className="w-full py-4 flex items-start justify-between text-left group rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
         >
           <div className="pr-4">
-            <span className="text-sm font-semibold text-stone-800 group-hover:text-stone-900">
+            <span className="type-h3 text-foreground group-hover:text-accent-strong transition-colors">
               {entry.term}
             </span>
             {entry.greek && (
-              <span className="block text-xs text-stone-400 mt-0.5 italic">
+              <span className="block type-caption text-faint-foreground mt-0.5 italic">
                 {entry.greek}
               </span>
             )}
           </div>
           <svg
-            className={`w-4 h-4 text-stone-400 flex-shrink-0 mt-1 transition-transform ${
+            className={`w-4 h-4 text-accent flex-shrink-0 mt-1.5 transition-transform ${
               isExpanded ? "rotate-180" : ""
             }`}
             fill="none"
@@ -538,11 +539,11 @@ export default function ResourcesPage() {
         {isExpanded && (
           <div className="pb-5 pr-8 space-y-2">
             {entry.refs && (
-              <p className="text-xs font-medium text-stone-500">
+              <p className="type-caption font-medium text-accent">
                 {entry.refs}
               </p>
             )}
-            <p className="text-sm text-stone-600 leading-relaxed">
+            <p className="type-body text-muted-foreground">
               {entry.definition}
             </p>
           </div>
@@ -555,63 +556,44 @@ export default function ResourcesPage() {
     <main className="max-w-2xl mx-auto px-4 py-12 sm:py-20">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 tracking-tight">
+        <h1 className="type-h1 text-foreground">
           Resources
         </h1>
-        <p className="text-stone-500 mt-2 text-base">
+        <p className="type-body text-muted-foreground mt-2">
           Theological foundations, biblical terminology, and recommended reading
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-stone-200 mb-8">
-        <button
-          onClick={() => setTab("glossary")}
-          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
-            tab === "glossary"
-              ? "border-stone-900 text-stone-900"
-              : "border-transparent text-stone-400 hover:text-stone-600"
-          }`}
-        >
-          Glossary
-        </button>
-        <button
-          onClick={() => setTab("sign-gifts")}
-          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
-            tab === "sign-gifts"
-              ? "border-stone-900 text-stone-900"
-              : "border-transparent text-stone-400 hover:text-stone-600"
-          }`}
-        >
-          Sign Gifts
-        </button>
-        <button
-          onClick={() => setTab("methodology")}
-          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
-            tab === "methodology"
-              ? "border-stone-900 text-stone-900"
-              : "border-transparent text-stone-400 hover:text-stone-600"
-          }`}
-        >
-          Methodology
-        </button>
-        <button
-          onClick={() => setTab("bibliography")}
-          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
-            tab === "bibliography"
-              ? "border-stone-900 text-stone-900"
-              : "border-transparent text-stone-400 hover:text-stone-600"
-          }`}
-        >
-          Bibliography
-        </button>
+      <div className="flex border-b border-border mb-8">
+        {(
+          [
+            ["glossary", "Glossary"],
+            ["sign-gifts", "Sign Gifts"],
+            ["methodology", "Methodology"],
+            ["bibliography", "Bibliography"],
+          ] as [Tab, string][]
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            onClick={() => setTab(value)}
+            aria-current={tab === value ? "true" : undefined}
+            className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 -mb-px focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-t-sm ${
+              tab === value
+                ? "border-accent text-accent"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Glossary Tab */}
       {tab === "glossary" && (
         <div className="space-y-10">
-          <div className="bg-stone-100/60 rounded-2xl border border-stone-200 p-5">
-            <p className="text-sm text-stone-600 leading-relaxed">
+          <div className="bg-surface-subtle rounded-card border border-border p-5">
+            <p className="type-body text-muted-foreground">
               A comprehensive glossary of biblical and theological terms related to
               spiritual gifts. Greek terms are transliterated and referenced to their
               primary New Testament occurrences. Definitions draw from standard
@@ -622,14 +604,14 @@ export default function ResourcesPage() {
 
           {ALL_SECTIONS.map((section, sIdx) => (
             <div key={sIdx}>
-              <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1">
+              <h2 className="type-eyebrow text-accent mb-1">
                 {section.title}
               </h2>
               {section.subtitle && (
-                <p className="text-xs text-stone-400 mb-3">{section.subtitle}</p>
+                <p className="type-caption text-muted-foreground mb-3">{section.subtitle}</p>
               )}
               {!section.subtitle && <div className="mb-3" />}
-              <div className="bg-white rounded-2xl border border-stone-200 px-5">
+              <div className="bg-surface rounded-card border border-border shadow-card px-5">
                 {section.entries.map((entry, eIdx) =>
                   renderEntry(entry, sIdx, eIdx)
                 )}
@@ -642,14 +624,14 @@ export default function ResourcesPage() {
       {/* Sign Gifts Tab */}
       {tab === "sign-gifts" && (
         <div className="space-y-10">
-          <div className="bg-stone-100/60 rounded-2xl border border-stone-200 p-5 space-y-3">
-            <p className="text-sm text-stone-600 leading-relaxed">
+          <div className="bg-surface-subtle rounded-card border border-border p-5 space-y-3">
+            <p className="type-body text-muted-foreground">
               The miraculous or &ldquo;sign&rdquo; gifts occupy a unique place in New Testament
               theology. They functioned during the inaugural period of the new covenant &mdash;
               from Pentecost through the close of the apostolic era &mdash; as divine
               authentication of the apostolic message and the in-breaking of God&apos;s kingdom.
             </p>
-            <p className="text-sm text-stone-600 leading-relaxed">
+            <p className="type-body text-muted-foreground">
               This assessment operates within a cessationist framework (the sign gifts
               have fulfilled their foundational purpose) while affirming that open-but-cautious
               continuationism falls within acceptable evangelical boundaries. Both positions
@@ -660,14 +642,14 @@ export default function ResourcesPage() {
 
           {SIGN_SECTIONS.map((section, sIdx) => (
             <div key={sIdx}>
-              <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1">
+              <h2 className="type-eyebrow text-accent mb-1">
                 {section.title}
               </h2>
               {section.subtitle && (
-                <p className="text-xs text-stone-400 mb-3">{section.subtitle}</p>
+                <p className="type-caption text-muted-foreground mb-3">{section.subtitle}</p>
               )}
               {!section.subtitle && <div className="mb-3" />}
-              <div className="bg-white rounded-2xl border border-stone-200 px-5">
+              <div className="bg-surface rounded-card border border-border shadow-card px-5">
                 {section.entries.map((entry, eIdx) =>
                   renderEntry(entry, sIdx + 100, eIdx)
                 )}
@@ -680,19 +662,19 @@ export default function ResourcesPage() {
       {/* Methodology Tab */}
       {tab === "methodology" && (
         <div className="space-y-10">
-          <div className="bg-stone-100/60 rounded-2xl border border-stone-200 p-5 space-y-3">
-            <p className="text-sm text-stone-600 leading-relaxed">
+          <div className="bg-surface-subtle rounded-card border border-border p-5 space-y-3">
+            <p className="type-body text-muted-foreground">
               How Charismata measures spiritual gifts &mdash; the psychometric approach,
               scoring model, and design decisions behind the assessment.
             </p>
           </div>
 
           <div>
-            <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1">
+            <h2 className="type-eyebrow text-accent mb-1">
               Assessment Design
             </h2>
             <div className="mb-3" />
-            <div className="bg-white rounded-2xl border border-stone-200 px-5">
+            <div className="bg-surface rounded-card border border-border shadow-card px-5">
               {ASSESSMENT_TERMS.map((entry, eIdx) =>
                 renderEntry(entry, 200, eIdx)
               )}
@@ -704,8 +686,8 @@ export default function ResourcesPage() {
       {/* Bibliography Tab */}
       {tab === "bibliography" && (
         <div className="space-y-10">
-          <div className="bg-stone-100/60 rounded-2xl border border-stone-200 p-5">
-            <p className="text-sm text-stone-600 leading-relaxed">
+          <div className="bg-surface-subtle rounded-card border border-border p-5">
+            <p className="type-body text-muted-foreground">
               The following works have informed the theological framework, assessment
               design, and pastoral application of Charismata. They represent a range of
               evangelical perspectives &mdash; from cessationist to open-but-cautious
@@ -715,23 +697,23 @@ export default function ResourcesPage() {
           </div>
 
           <div>
-            <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-4">
+            <h2 className="type-eyebrow text-accent mb-4">
               Primary Sources
             </h2>
             <div className="space-y-4">
               {BIBLIOGRAPHY.map((entry, idx) => (
                 <div
                   key={idx}
-                  className="bg-white rounded-2xl border border-stone-200 p-5"
+                  className="bg-surface rounded-card border border-border shadow-card p-5"
                 >
-                  <p className="text-sm text-stone-800">
+                  <p className="type-body text-foreground">
                     <span className="font-semibold">{entry.author}</span>{" "}
                     <span className="italic">{entry.title}</span>.{" "}
-                    <span className="text-stone-500">
+                    <span className="text-muted-foreground">
                       {entry.publisher}, {entry.year}.
                     </span>
                   </p>
-                  <p className="text-sm text-stone-500 leading-relaxed mt-2">
+                  <p className="type-small text-muted-foreground mt-2">
                     {entry.note}
                   </p>
                 </div>
@@ -740,23 +722,23 @@ export default function ResourcesPage() {
           </div>
 
           <div>
-            <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-4">
+            <h2 className="type-eyebrow text-accent mb-4">
               Reference Works & Dictionaries
             </h2>
             <div className="space-y-4">
               {REFERENCE_WORKS.map((entry, idx) => (
                 <div
                   key={idx}
-                  className="bg-white rounded-2xl border border-stone-200 p-5"
+                  className="bg-surface rounded-card border border-border shadow-card p-5"
                 >
-                  <p className="text-sm text-stone-800">
+                  <p className="type-body text-foreground">
                     <span className="font-semibold">{entry.author}</span>{" "}
                     <span className="italic">{entry.title}</span>.{" "}
-                    <span className="text-stone-500">
+                    <span className="text-muted-foreground">
                       {entry.publisher}, {entry.year}.
                     </span>
                   </p>
-                  <p className="text-sm text-stone-500 leading-relaxed mt-2">
+                  <p className="type-small text-muted-foreground mt-2">
                     {entry.note}
                   </p>
                 </div>
@@ -767,8 +749,8 @@ export default function ResourcesPage() {
       )}
 
       {/* Footer note */}
-      <div className="mt-12 pt-6 border-t border-stone-200 space-y-4">
-        <p className="text-xs text-stone-400 text-center leading-relaxed">
+      <div className="mt-12 pt-6 border-t border-border space-y-4">
+        <p className="type-caption text-faint-foreground text-center">
           This assessment operates within a cessationist framework as articulated by
           Thomas Schreiner and Richard Gaffin, while affirming that open-but-cautious
           continuationism (represented by Wayne Grudem and John Piper) falls within
@@ -779,14 +761,14 @@ export default function ResourcesPage() {
         <div className="flex justify-center gap-3">
           <Link
             href="/terms"
-            className="text-xs text-stone-400 hover:text-stone-600 transition-colors"
+            className="type-caption text-muted-foreground hover:text-accent transition-colors rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Terms of Service
           </Link>
-          <span className="text-xs text-stone-300">&middot;</span>
+          <span className="type-caption text-border-strong">&middot;</span>
           <Link
             href="/privacy"
-            className="text-xs text-stone-400 hover:text-stone-600 transition-colors"
+            className="type-caption text-muted-foreground hover:text-accent transition-colors rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Privacy Policy
           </Link>

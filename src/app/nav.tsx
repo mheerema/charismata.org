@@ -17,12 +17,16 @@ export function SiteNav() {
     pathname === "/terms" ||
     pathname === "/privacy";
 
+  const linkBase =
+    "text-sm transition-colors rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
   return (
-    <nav className="border-b border-stone-200 bg-white/80 backdrop-blur-sm sticky top-0 z-20">
+    <nav className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-20">
       <div className="max-w-2xl mx-auto px-4 flex items-center justify-between h-12">
         <Link
           href="/"
-          className="text-sm font-semibold text-stone-900 tracking-tight"
+          className="text-base font-semibold text-foreground tracking-tight rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          style={{ fontFamily: "var(--font-heading)" }}
         >
           Charismata
         </Link>
@@ -30,27 +34,27 @@ export function SiteNav() {
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className={`text-sm transition-colors ${
+            className={`${linkBase} ${
               isHome
-                ? "text-stone-900 font-medium"
-                : "text-stone-500 hover:text-stone-700"
+                ? "text-accent font-medium"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Assessment
           </Link>
           <Link
             href="/resources"
-            className={`text-sm transition-colors ${
+            className={`${linkBase} ${
               isResources
-                ? "text-stone-900 font-medium"
-                : "text-stone-500 hover:text-stone-700"
+                ? "text-accent font-medium"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Resources
           </Link>
           <a
             href="mailto:matt@mattheerema.com?subject=Charismata%20Feedback"
-            className="text-sm text-stone-500 hover:text-stone-700 transition-colors"
+            className={`${linkBase} text-muted-foreground hover:text-foreground`}
           >
             Feedback
           </a>
